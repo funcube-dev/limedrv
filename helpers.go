@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/myriadrf/limedrv/limewrap"
 	"github.com/racerxdl/fastconvert"
+	"os"
 	"runtime"
 	"strings"
 	"unsafe"
@@ -54,7 +55,7 @@ func ConvertC64toI16(dst []int16, src []complex64) {
 	}
 }
 
-func streamTXLoop(con chan bool, channel LMSChannel, txCb func([]complex64, int)) {
+func streamTXLoop(con chan bool, channel LMSChannel, txCb func([]complex64, int) int) {
 	//fmt.Fprintf(os.Stderr,"Worker Started")
 	running := true
 	sampleLength := floatSize
@@ -81,6 +82,7 @@ func streamTXLoop(con chan bool, channel LMSChannel, txCb func([]complex64, int)
 	m.SetTimestamp(0)
 	m.SetFlushPartialPacket(false)
 	m.SetWaitForTimestamp(false)
+
 	//fmt.Fprintf(os.Stderr,"Worker Running")
 	for running {
 		select {
@@ -90,8 +92,14 @@ func streamTXLoop(con chan bool, channel LMSChannel, txCb func([]complex64, int)
 			return
 		default:
 		}
+		sampleCount := 0
 		if txCb != nil {
-			txCb(rxData, channel.parentIndex) // Fill buffer
+			sampleCount = txCb(rxData, channel.parentIndex) // Fill buffer
+			if sampleCount > fifoSize {
+				fmt.Printf("Error sending samples. buffer size exeeded, max Expected %d Got %d\n", fifoSize, sampleCount)
+				// set back to fifo size and carry on
+				sampleCount = fifoSize
+			}
 		}
 
 		if sampleLength == floatSize {
@@ -101,11 +109,11 @@ func streamTXLoop(con chan bool, channel LMSChannel, txCb func([]complex64, int)
 		}
 
 		runtime.LockOSThread()
-		sentSamples := limewrap.LMS_SendStream(channel.stream, buffPtr, fifoSize, m, samplesWait)
+		sentSamples := limewrap.LMS_SendStream(channel.stream, buffPtr, int64(sampleCount), m, samplesWait)
 		runtime.UnlockOSThread()
 
-		if sentSamples != fifoSize {
-			fmt.Printf("Error sending samples. Expected %d sent %d\n", fifoSize, sentSamples)
+		if sentSamples != sampleCount {
+			fmt.Printf("Error sending samples. Expected %d sent %d\n", sampleCount, sentSamples)
 		}
 		runtime.Gosched()
 	}

@@ -9,6 +9,8 @@ import (
 	"unsafe"
 )
 
+type LMSCallbackFuncTx func([]complex64, int) int
+
 // LMSDevice is a class representing a Open LimeSDR Device.
 // Use limedrv.Open function to create an instance
 type LMSDevice struct {
@@ -43,7 +45,7 @@ type LMSDevice struct {
 	controlChan chan bool
 	running     bool
 	callback    func([]complex64, int, uint64)
-	txCallback  func([]complex64, int)
+	txCallback  func([]complex64, int) int
 }
 
 // region Private Methods
@@ -262,7 +264,7 @@ func (d *LMSDevice) SetCallback(cb func([]complex64, int, uint64)) {
 }
 
 // SetTXCallback sets the callback to be called when any TX Channel needs samples
-func (d *LMSDevice) SetTXCallback(cb func([]complex64, int)) {
+func (d *LMSDevice) SetTXCallback(cb func([]complex64, int) int) {
 	d.txCallback = cb
 }
 
@@ -509,6 +511,11 @@ func (d *LMSDevice) Stop() {
 	} else {
 		_, _ = fmt.Fprintf(os.Stderr, "Device not running")
 	}
+}
+
+// IsRunning returns the state of the device loop
+func (d *LMSDevice) IsRunning() bool {
+	return d.running
 }
 
 // SetSampleRate sets the sampleRate for specified value.
