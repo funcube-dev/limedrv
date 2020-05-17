@@ -1,4 +1,4 @@
-module github.com/myriadrf/limedrv
+module github.com/funcube-dev/limedrv
 
 go 1.12
 
