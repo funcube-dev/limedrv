@@ -4,7 +4,7 @@ import "C"
 import (
 	"encoding/binary"
 	"fmt"
-	"github.com/myriadrf/limedrv/limewrap"
+	"github.com/funcube-dev/limedrv/limewrap"
 	"github.com/racerxdl/fastconvert"
 	"os"
 	"runtime"
