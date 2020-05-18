@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/funcube-dev/limedrv/limewrap"
 	"github.com/racerxdl/fastconvert"
-	"os"
 	"runtime"
 	"strings"
 	"unsafe"
