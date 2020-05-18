@@ -14,11 +14,12 @@ const sampleRate = 5e6
 const toneFrequency = 1e6
 const fRatio = toneFrequency / sampleRate
 
-func NeedSamples(data []complex64, channel int) {
+func NeedSamples(data []complex64, channel int) int {
     for i := 0; i < len(data); i++ {
         w := 2 * math.Pi * fRatio * float64(i)
         data[i] = complex64(complex(math.Cos(w), math.Sin(w)))
     }
+    return len(data)
 }
 
 func main() {

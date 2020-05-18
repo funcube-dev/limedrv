@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/myriadrf/limedrv"
+	"github.com/funcube-dev/limedrv"
 	"log"
 	"os"
 	"time"
@@ -11,9 +11,10 @@ func OnSamples(data []complex64, channel int, timestamp uint64) {
 	log.Println("Received samples from channel", channel, "with timestamp", timestamp)
 }
 
-func NeedSamples(data []complex64, channel int) {
+func NeedSamples(data []complex64, channel int) int {
 	log.Printf("Channel %d needs %d samples.", channel, len(data))
 	// TODO: Put something in data
+        return 0
 }
 
 func main() {

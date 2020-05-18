@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"flag"
 	"fmt"
-	"github.com/myriadrf/limedrv"
+	"github.com/funcube-dev/limedrv"
 	"github.com/racerxdl/segdsp/demodcore"
 	"log"
 	"os"

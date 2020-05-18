@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/myriadrf/limedrv"
+	"github.com/funcube-dev/limedrv"
 	"github.com/racerxdl/segdsp/dsp"
 	"github.com/racerxdl/segdsp/dsp/fft"
 	"github.com/racerxdl/segdsp/tools"
